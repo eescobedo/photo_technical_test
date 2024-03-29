@@ -1,5 +1,7 @@
 import express from 'express'
-import photosRouter from './routes/photos'
+import routes from './routes/photos'
+// import errorHandler from './middleware/errorMiddleware';
+// import photosRouter from './routes/photos'
 
 const app = express()
 app.use(express.json())
@@ -11,7 +13,8 @@ app.get('/ping', (_req, res) => {
   res.send('pong')
 })
 
-app.use('/api/photos', photosRouter)
+app.use('/api/photos', routes)
+// app.use(errorHandler)
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`)

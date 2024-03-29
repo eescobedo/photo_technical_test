@@ -1,13 +1,9 @@
-import express from 'express'
+import { Router } from 'express';
+import { PhotoController } from '../controllers/PhotoController';
 
-const router = express.Router()
+const router = Router();
+const photoController = new PhotoController();
 
-router.get('/', (_req, res) => {
-  res.send('All photos')
-})
+router.get('/:photoId', (req, res) => photoController.getPhotoDetails(req, res));
 
-router.post('/', (_req, res) => {
-  res.send('Create new photo')
-})
-
-export default router
+export default router;
