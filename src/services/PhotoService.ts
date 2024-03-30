@@ -1,23 +1,27 @@
-import { PhotoRepository } from '../repositories/PhotoRepository';
-import { AlbumRepository } from '../repositories/AlbumRepository';
-import { UserRepository } from '../repositories/UserRepository';
+import { PhotoRepository } from '../repositories/PhotoRepository'
+import { AlbumRepository } from '../repositories/AlbumRepository'
+import { UserRepository } from '../repositories/UserRepository'
 
 export class PhotoService {
-  private photoRepository = new PhotoRepository();
-  private albumRepository = new AlbumRepository();
-  private userRepository = new UserRepository();
+  private readonly photoRepository = new PhotoRepository()
+  private readonly albumRepository = new AlbumRepository()
+  private readonly userRepository = new UserRepository()
 
-  async getPhotoDetails(photoId: string) {
-    const photo = await this.photoRepository.getPhotoDetails(photoId);
-    const album = await this.albumRepository.getAlbumById(photo.albumId);
-    const user = await this.userRepository.getUserById(album.userId);
+  async getPhotoDetails (photoId: string) {
+    const photo = await this.photoRepository.getPhotoDetails(photoId)
+    const album = await this.albumRepository.getAlbumById(photo.albumId)
+    const user = await this.userRepository.getUserById(album.userId)
 
     return {
-      ...photo,
+      id: photo.id,
+      title: photo.title,
+      url: photo.url,
+      thumbnailUrl: photo.thumbnailUrl,
       album: {
-        ...album,
-        user
+        id: album.id,
+        title: album.title,
+        user: user
       }
-    };
+    }
   }
 }

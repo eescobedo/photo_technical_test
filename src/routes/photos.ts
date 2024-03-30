@@ -1,9 +1,9 @@
-import { Router } from 'express';
-import { PhotoController } from '../controllers/PhotoController';
+import { Router } from 'express'
+import { PhotoController } from '../controllers/PhotoController'
 
-const router = Router();
-const photoController = new PhotoController();
+const router = Router()
+const photoController = new PhotoController()
 
-router.get('/:photoId', (req, res) => photoController.getPhotoDetails(req, res));
+router.get('/:photoId', async (req, res) => await photoController.getPhotoDetails(req, res))
 
-export default router;
+export default router
