@@ -1,7 +1,13 @@
 import { PhotoRepository } from '../repositories/PhotoRepository'
 import { AlbumRepository } from '../repositories/AlbumRepository'
 import { UserRepository } from '../repositories/UserRepository'
+import { EnrichedPhoto } from '../models/EnrichedPhoto'
 
+interface Filters {
+  title?: string
+  albumTitle?: string
+  userEmail?: string
+}
 export class PhotoService {
   private readonly photoRepository = new PhotoRepository()
   private readonly albumRepository = new AlbumRepository()
@@ -20,8 +26,59 @@ export class PhotoService {
       album: {
         id: album.id,
         title: album.title,
-        user: user
+        user
       }
     }
+  }
+
+  async getPhotosWithFilters (filters: Filters, limit: number = 25, offset: number = 0): Promise<EnrichedPhoto[]> {
+    const [photos, albums, users] = await Promise.all([
+      this.photoRepository.getAllPhotos(),
+      this.albumRepository.getAllAlbums(),
+      this.userRepository.getAllUsers()
+    ])
+
+    let filteredPhotos = photos
+
+    if (filters.title) {
+      filteredPhotos = filteredPhotos.filter(photo => photo.title && filters.title && photo.title.includes(filters.title))
+    }
+
+    if (filters.albumTitle) {
+      filteredPhotos = filteredPhotos.filter(photo => {
+        const album = albums.find(album => album.id === photo.albumId)
+        if (album == null) {
+          throw new Error(`Album not found for photo with id ${photo.id}`)
+        }
+        return album.title && filters.albumTitle && album.title.includes(filters.albumTitle)
+      })
+    }
+
+    if (filters.userEmail) {
+      filteredPhotos = filteredPhotos.filter(photo => {
+        const album = albums.find(album => album.id === photo.albumId)
+        if (album == null) {
+          throw new Error(`Album not found for photo with id ${photo.id}`)
+        }
+        const user = users.find(user => user.id === album.userId)
+        if (user == null) {
+          throw new Error(`User not found for photo with id ${album.userId}`)
+        }
+        return user.email && filters.userEmail && user.email.includes(filters.userEmail)
+      })
+    }
+
+    const paginatedPhotos = filteredPhotos.slice(offset, offset + limit)
+
+    const enrichedPhotos = paginatedPhotos.map(photo => {
+      const album = albums.find(album => album.id === photo.albumId)
+      if (album == null) {
+        throw new Error(`Album not found for photo with id ${photo.id}`)
+      }
+      const user = users.find(user => user.id === album.userId)
+      return new EnrichedPhoto(photo, album, user)
+    })
+
+    return enrichedPhotos
   }
 }

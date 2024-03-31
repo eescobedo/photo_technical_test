@@ -24,4 +24,22 @@ export class UserRepository {
     const company = new Company(data.company.name, data.company.catchPhrase, data.company.bs)
     return new User(data.id, data.name, data.username, data.email, address, data.phone, data.website, company)
   }
+
+  async getAllUsers (): Promise<User[]> {
+    const response = await axios.get('https://jsonplaceholder.typicode.com/users')
+    const data = response.data
+    console.log({ data })
+
+    return data.map((user: any) => {
+      const address = new Address(
+        user.address.street,
+        user.address.suite,
+        user.address.city,
+        user.address.zipcode,
+        new Geo(user.address.geo.lat, user.address.geo.lng)
+      )
+      const company = new Company(user.company.name, user.company.catchPhrase, user.company.bs)
+      return new User(user.id, user.name, user.username, user.email, address, user.phone, user.website, company)
+    })
+  }
 }
