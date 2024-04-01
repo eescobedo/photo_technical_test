@@ -16,7 +16,7 @@ export class PhotoService {
   async getPhotoDetails (photoId: string) {
     const photo = await this.photoRepository.getPhotoDetails(photoId)
     const album = await this.albumRepository.getAlbumById(photo.albumId)
-    const user = await this.userRepository.getUserById(album.userId)
+    const user = await this.userRepository.getUserById(album.userId.toString())
 
     return {
       id: photo.id,
@@ -32,6 +32,7 @@ export class PhotoService {
   }
 
   async getPhotosWithFilters (filters: Filters, limit: number = 25, offset: number = 0): Promise<EnrichedPhoto[]> {
+    console.log('getPhotosWithFilters@PhotoService')
     const [photos, albums, users] = await Promise.all([
       this.photoRepository.getAllPhotos(),
       this.albumRepository.getAllAlbums(),

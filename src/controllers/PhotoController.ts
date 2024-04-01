@@ -6,6 +6,8 @@ export class PhotoController {
 
   async getPhotoDetails (req: Request, res: Response): Promise<void> {
     try {
+      console.log('getPhotoDetails')
+
       const { photoId } = req.params
       const photoDetails = await this.photoService.getPhotoDetails(photoId)
       res.json(photoDetails)
@@ -18,7 +20,8 @@ export class PhotoController {
 
   public async getPhotosWithFilters (req: Request, res: Response): Promise<void> {
     try {
-      // init with filters
+      console.log('getPhotosWithFilters')
+
       const filters = {
         title: req.query.title as string,
         albumTitle: req.query['album.title'] as string,
