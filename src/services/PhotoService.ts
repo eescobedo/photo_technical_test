@@ -77,7 +77,7 @@ export class PhotoService {
         throw new Error(`Album not found for photo with id ${photo.id}`)
       }
       const user = users.find(user => user.id === album.userId)
-      return new EnrichedPhoto(photo, album, user)
+      return new EnrichedPhoto(photo, album, user, filteredPhotos.length)
     })
 
     return enrichedPhotos
