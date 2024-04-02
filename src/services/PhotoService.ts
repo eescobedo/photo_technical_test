@@ -69,7 +69,8 @@ export class PhotoService {
     }
 
     const total = filteredPhotos.length
-    const paginatedPhotos = filteredPhotos.slice(offset, offset + limit)
+    const begin = offset * limit
+    const paginatedPhotos = filteredPhotos.slice(begin, begin + limit)
 
     const enrichedPhotos = paginatedPhotos.map(photo => {
       const album = albums.find(album => album.id === photo.albumId)
