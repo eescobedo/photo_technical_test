@@ -16,7 +16,6 @@ app.get('/ping', (_req, res) => {
 })
 
 app.use('/api/photos', routes)
-// app.use(errorHandler)
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`)

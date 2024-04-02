@@ -13,7 +13,7 @@ export class PhotoService {
   private readonly albumRepository = new AlbumRepository()
   private readonly userRepository = new UserRepository()
 
-  async getPhotoDetails (photoId: string) {
+  async getPhotoDetails (photoId: string): Promise<any> {
     const photo = await this.photoRepository.getPhotoDetails(photoId)
     const album = await this.albumRepository.getAlbumById(photo.albumId)
     const user = await this.userRepository.getUserById(album.userId.toString())
@@ -31,8 +31,7 @@ export class PhotoService {
     }
   }
 
-  async getPhotosWithFilters (filters: Filters, limit: number = 25, offset: number = 0): Promise<EnrichedPhoto[]> {
-    console.log('getPhotosWithFilters@PhotoService')
+  async getPhotosWithFilters (filters: Filters, limit: number = 25, offset: number = 0): Promise<{ photos: EnrichedPhoto[], total: number }> {
     const [photos, albums, users] = await Promise.all([
       this.photoRepository.getAllPhotos(),
       this.albumRepository.getAllAlbums(),
@@ -69,6 +68,7 @@ export class PhotoService {
       })
     }
 
+    const total = filteredPhotos.length
     const paginatedPhotos = filteredPhotos.slice(offset, offset + limit)
 
     const enrichedPhotos = paginatedPhotos.map(photo => {
@@ -80,6 +80,6 @@ export class PhotoService {
       return new EnrichedPhoto(photo, album, user, filteredPhotos.length)
     })
 
-    return enrichedPhotos
+    return { photos: enrichedPhotos, total } as { photos: EnrichedPhoto[], total: number }
   }
 }
