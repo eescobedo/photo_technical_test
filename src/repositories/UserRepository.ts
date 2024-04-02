@@ -1,18 +1,13 @@
 import axios from 'axios'
 
-// export class UserRepository {
-//   async getUserById (userId: string) {
-//     const response = await axios.get(`https://jsonplaceholder.typicode.com/users/${userId}`)
-//     return response.data
-//   }
-// }
 import { User } from '../models/User'
 import { Address, Geo } from '../models/Address'
 import { Company } from '../models/Company'
+import 'dotenv/config'
 
 export class UserRepository {
   async getUserById (userId: string): Promise<User> {
-    const response = await axios.get(`https://jsonplaceholder.typicode.com/users/${userId}`)
+    const response = await axios.get(`${process.env.EXTERNAL_API_URL}/users/${userId}`)
     const data = response.data
     const address = new Address(
       data.address.street,
@@ -26,9 +21,8 @@ export class UserRepository {
   }
 
   async getAllUsers (): Promise<User[]> {
-    const response = await axios.get('https://jsonplaceholder.typicode.com/users')
+    const response = await axios.get(`${process.env.EXTERNAL_API_URL}/users`)
     const data = response.data
-    console.log({ data })
 
     return data.map((user: any) => {
       const address = new Address(
